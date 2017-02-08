@@ -25,9 +25,17 @@ paramstyle = "numeric"
 tracing = os.environ.get('HDB_TRACE', 'FALSE').upper() in ('TRUE', '1')
 
 
-def connect(host, port, user, password, autocommit=False):
+def connect(host, port, user, password, database=None, autocommit=False):
     conn = Connection(host, port, user, password, autocommit)
     conn.connect()
+
+    if database:
+        cur = conn.cursor()
+        cur.execute('SET SCHEMA "{0}"'.format(schema))
+
+        if not autocommit:
+            conn.commit()
+
     return conn
 
 
